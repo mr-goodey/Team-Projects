@@ -1,0 +1,71 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       Int        @id @default(autoincrement())
+  username String
+  email    String     @unique
+  password String
+  theme    String     @default("light")
+  chats    ChatUser[]
+  messages Message[]
+  projects Project[]
+  tasks    Task[]
+}
+
+model Chat {
+  id          Int        @id @default(autoincrement())
+  name        String
+  description String?
+  messages    Message[]
+  users       ChatUser[]
+}
+
+model Message {
+  id        Int      @id @default(autoincrement())
+  text      String
+  timestamp DateTime @default(now())
+  chat      Chat     @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  chatId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+}
+
+model ChatUser {
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId Int
+  chat   Chat @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  chatId Int
+
+  @@id([userId, chatId])
+}
+
+model Project {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  leaderId    Int
+  leader      User     @relation(fields: [leaderId], references: [id])
+  tasks       Task[]
+  deadline    DateTime @default(now())
+}
+
+model Task {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  projectId   Int
+  employeeId  Int?
+  projects    Project? @relation(fields: [projectId], references: [id])
+  employees   User?    @relation(fields: [employeeId], references: [id])
+  status      String   @default("todo")
+}
