@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+	</head>
+	<body>
+		<div>
+			<form id="createTL" action="createTeamLeader.php" style="text-align: center;" method="post">
+				<label for="email4">Email:</label>
+				<input type="text" id="email4" name="email4"><br><br>
+				<label for="team4">Team:</label>
+				<input type="number" id="team4" name="team4"><br><br>
+				<input type="submit" value="Create Team Leader"><br><br>
+				<div id="Response4"></div><br><br>
+			</form>
+			<form id="removeTL" action="removeTeamLeader.php" style="text-align: center;" method="post">
+				<label for="email5">Email:</label>
+				<input type="text" id="email5" name="email5"><br><br>
+				<label for="team5">Team:</label>
+				<input type="number" id="team5" name="team5"><br><br>
+				<input type="submit" value="Remove Team Leader"><br><br>
+				<div id="Response5"></div><br><br>
+			</form>
+			<script>
+				var frm4 = $('#createTL');
+				frm4.submit(function (e) {
+					e.preventDefault();
+					$.ajax({
+						type: frm4.attr('method'),
+						url: frm4.attr('action'),
+						data: frm4.serialize(),
+						success: function (data4) {
+							if (data4.status == 'complete') {
+								$("#Response4").html("Team leader created");
+							} else if (data4.status == 'fault1') {
+								$("#Response4").html("Invalid email");
+							} else if (data4.status == 'fault2') {
+								$("#Response4").html("User not invited");
+							} else if (data4.status == 'fault3') {
+								$("#Response4").html("User not an employee");
+							} else if (data4.status == 'fault4') {
+								$("#Response4").html("User already team leader");
+							} else if (data4.status == 'fault5') {
+								$("#Response4").html("Team already has a leader");
+							} else if (data4.status == 'fault6') {
+								$("#Response4").html("User not on team");
+							}
+						},
+						error: function (data4) {
+							$("#Response4").html("An error occurred");
+						},
+					});
+				});
+				
+				var frm5 = $('#removeTL');
+				frm5.submit(function (e) {
+					e.preventDefault();
+					$.ajax({
+						type: frm5.attr('method'),
+						url: frm5.attr('action'),
+						data: frm5.serialize(),
+						success: function (data5) {
+							if (data5.status == 'correct') {
+								$("#Response5").html("Team leader removed");
+							} else if (data5.status == 'incorrect1') {
+								$("#Response5").html("Invalid email");
+							} else if (data5.status == 'incorrect2') {
+								$("#Response5").html("User not invited");
+							} else if (data5.status == 'incorrect3') {
+								$("#Response5").html("User not team leader");
+							}
+						},
+						error: function (data5) {
+							$("#Response5").html("An error occurred");
+						},
+					});
+				});
+			</script>
+		</div>
+	</body>
+</html>
